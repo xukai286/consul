@@ -271,6 +271,7 @@ func (s *snapshot) persistAutopilot(sink raft.SnapshotSink,
 	if err != nil {
 		return err
 	}
+	// Make sure we don't write a nil config out to a snapshot.
 	if autopilot == nil {
 		return nil
 	}
@@ -308,6 +309,10 @@ func (s *snapshot) persistConnectCAConfig(sink raft.SnapshotSink,
 	config, err := s.state.CAConfig()
 	if err != nil {
 		return err
+	}
+	// Make sure we don't write a nil config out to a snapshot.
+	if config == nil {
+		return nil
 	}
 
 	if _, err := sink.Write([]byte{byte(structs.ConnectCAConfigType)}); err != nil {
